@@ -1,8 +1,12 @@
 package com.juancnuno.maxavailable;
 
+import java.io.InputStream;
+import java.util.Comparator;
 import java.util.prefs.Preferences;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonParser;
 import jakarta.json.stream.JsonParser.Event;
 
@@ -10,13 +14,26 @@ final class CategoriesResponseParser {
 
     private final JsonParser parser;
 
-    CategoriesResponseParser(JsonParser parser) {
+    private CategoriesResponseParser(JsonParser parser) {
         this.parser = parser;
+    }
 
+    static Object getMaxAvailable(InputStream in) {
+        try (var parser = Json.createParser(in)) {
+            return new CategoriesResponseParser(parser).getMaxAvailable();
+        }
+    }
+
+    private Object getMaxAvailable() {
         next(Event.START_OBJECT);
         nextData();
         nextCategoryGroups();
-        System.out.println(findCategoryGroup());
+
+        return findCategoryGroup().getJsonArray("categories").stream()
+                .map(JsonValue::asJsonObject)
+                .max(Comparator.comparingInt(category -> category.getInt("balance")))
+                .map(category -> category.getString("name"))
+                .orElseThrow();
     }
 
     private void nextData() {
@@ -29,7 +46,7 @@ final class CategoriesResponseParser {
         next(Event.START_ARRAY);
     }
 
-    private Object findCategoryGroup() {
+    private JsonObject findCategoryGroup() {
         JsonObject group;
         var id = Preferences.userNodeForPackage(MaxAvailable.class).get("category_group", null);
 

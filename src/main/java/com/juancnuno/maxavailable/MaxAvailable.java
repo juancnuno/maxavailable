@@ -20,10 +20,8 @@ final class MaxAvailable {
                     .header("Authorization", "Bearer " + args[0])
                     .build();
 
-            var response = client.send(request, BodyHandlers.ofString());
-
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
+            var response = client.send(request, BodyHandlers.ofInputStream());
+            System.out.println(CategoriesResponseParser.getMaxAvailable(response.body()));
         }
     }
 }
