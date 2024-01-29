@@ -20,8 +20,13 @@ final class MaxAvailable {
                     .header("Authorization", "Bearer " + args[0])
                     .build();
 
-            var response = client.send(request, BodyHandlers.ofInputStream());
-            System.out.println(CategoriesResponseParser.getMaxAvailable(response.body()));
+            System.out.println(getMaxAvailable(client, request));
+        }
+    }
+
+    private static Object getMaxAvailable(HttpClient client, HttpRequest request) throws Exception {
+        try (var in = client.send(request, BodyHandlers.ofInputStream()).body()) {
+            return new CategoriesResponseParser(in).getMaxAvailable();
         }
     }
 }

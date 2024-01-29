@@ -14,17 +14,11 @@ final class CategoriesResponseParser {
 
     private final JsonParser parser;
 
-    private CategoriesResponseParser(JsonParser parser) {
-        this.parser = parser;
+    CategoriesResponseParser(InputStream in) {
+        parser = Json.createParser(in);
     }
 
-    static Object getMaxAvailable(InputStream in) {
-        try (var parser = Json.createParser(in)) {
-            return new CategoriesResponseParser(parser).getMaxAvailable();
-        }
-    }
-
-    private Object getMaxAvailable() {
+    Object getMaxAvailable() {
         next(Event.START_OBJECT);
         nextData();
         nextCategoryGroups();
