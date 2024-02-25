@@ -25,8 +25,8 @@ final class CategoriesResponseParser {
 
         return findCategoryGroup().getJsonArray("categories").stream()
                 .map(JsonValue::asJsonObject)
-                .max(Comparator.comparingInt(category -> category.getInt("balance")))
-                .map(category -> category.getString("name"))
+                .map(Category::new)
+                .max(Comparator.naturalOrder())
                 .orElseThrow();
     }
 
