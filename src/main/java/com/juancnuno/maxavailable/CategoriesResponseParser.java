@@ -2,6 +2,7 @@ package com.juancnuno.maxavailable;
 
 import java.io.InputStream;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
 import jakarta.json.Json;
@@ -42,7 +43,7 @@ final class CategoriesResponseParser {
 
     private JsonObject findCategoryGroup() {
         JsonObject group;
-        var id = Preferences.userNodeForPackage(MaxAvailable.class).get("category_group", null);
+        var id = Objects.requireNonNull(Preferences.userNodeForPackage(MaxAvailable.class).get("category_group", null));
 
         for (group = getCategoryGroup(); !group.getString("id").equals(id);
                 group = getCategoryGroup()) {
